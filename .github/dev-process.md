@@ -21,7 +21,7 @@ Work lives in GitHub issues. Changing the plan or the order is an edit on GitHub
 | `chore` | Upkeep: CI, tooling, an owner task, a deferred review finding. |
 | `docs` | Documentation only. |
 
-Titles read like the commit that closes them: `feat(kit): draw_state_machine with coverage overlay`. A hard dependency is a `blocked by` relation; a session does not start a blocked issue. Owner-only work is a `chore` assigned to the owner. Open product questions sit on the decisions `chore` (#5) with the default the work proceeds on; answers go into `docs/decisions.md`. Labels are applied from the title prefix by `.github/workflows/labels.yml`, so get the prefix right.
+Titles read like the commit that closes them: `feat(kit): draw_state_machine with coverage overlay`. A hard dependency is a `blocked by` relation; a session does not start a blocked issue. Owner-only work is a `chore` assigned to the owner. Open product questions go on an owner-assigned decisions `chore`, each with the default the work proceeds on; answers go into `docs/decisions.md`. Labels are applied from the title prefix by `.github/workflows/labels.yml`, so get the prefix right.
 
 The body of a work issue: `Goal`, `Context`, `Decide in this issue`, `Units`, `Definition of done` (ending with `make verify` green, review answered, a PR that closes the issue), `Not this issue`.
 
