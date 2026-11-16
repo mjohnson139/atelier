@@ -16,3 +16,7 @@ indent_style = tab
 
 [*.md]
 trim_trailing_whitespace = false
+
+[docs/assets/fonts/*.txt]
+# Licence texts stay byte-for-byte as published.
+trim_trailing_whitespace = false
