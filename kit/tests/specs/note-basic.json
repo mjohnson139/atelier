@@ -1,0 +1,8 @@
+{
+  "tool": "draw_note",
+  "spec": {
+    "title": "Daily word fetch",
+    "lines": ["Offline: falls back to the bundled list", "Owner: Worker /v1/word"],
+    "tone": "finding"
+  }
+}
