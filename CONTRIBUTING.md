@@ -6,13 +6,15 @@ Atelier is early: the concept and process are in place and the drawing kit is be
 
 ## Run it
 
-Nothing runs yet. Once the scaffold lands (#4) this section will hold the real commands; the plan is:
+You need [uv](https://docs.astral.sh/uv/); it installs Python 3.12 for you if needed.
 
 ```sh
-uv sync         # install
-make verify     # ruff, mypy, pytest (unit + golden images)
-make goldens    # re-render golden images after an intended visual change
+uv sync         # install the kit and the dev tools
+make verify     # ruff, mypy, pytest (unit + golden images); CI runs the same
+make goldens    # re-render golden SVGs after an intended visual change, then review and commit them
 ```
+
+Golden specs live in `kit/tests/specs/` as `<name>.json` (`{"tool": ..., "spec": {...}}`) next to the `<name>.svg` they must render to.
 
 ## Hard lines
 
