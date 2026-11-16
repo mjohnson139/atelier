@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+
+# Render scratch (committed views live under studio/ and kit/tests/)
+.atelier-tmp/
+
+# OS and editors
+.DS_Store
+.idea/
+.vscode/
