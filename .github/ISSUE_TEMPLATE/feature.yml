@@ -1,0 +1,15 @@
+name: Feature
+description: A new tool, perspective or capability
+title: "feat: "
+labels: [feat]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What it would let a perspective see or draw

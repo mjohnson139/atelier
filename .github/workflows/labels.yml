@@ -1,0 +1,51 @@
+# Keeps the type labels in step with issue titles (see .github/dev-process.md).
+# Creates the labels, then labels each issue by its title prefix: feat, fix, chore, docs or epic.
+name: labels
+
+on:
+  issues:
+    types: [opened, edited]
+  push:
+    branches: [main]
+    paths: [.github/workflows/labels.yml]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: labels-${{ github.event.issue.number || 'all' }}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      EVENT: ${{ github.event_name }}
+      NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Create or update the labels
+        if: github.event_name != 'issues'
+        run: |
+          gh label create epic  --force --color 5319E7 --description "A goal that takes several issues"
+          gh label create feat  --force --color 1D76DB --description "New or changed behavior the owner can see"
+          gh label create fix   --force --color D73A4A --description "Something is wrong"
+          gh label create chore --force --color C5DEF5 --description "Upkeep with no visible change"
+          gh label create docs  --force --color 0E8A16 --description "Documentation only"
+
+      - name: Label issues by title prefix
+        run: |
+          if [ "$EVENT" = "issues" ]; then
+            numbers="$NUMBER"
+          else
+            numbers=$(gh issue list --state all --limit 1000 --json number --jq '.[].number')
+          fi
+          for n in $numbers; do
+            title=$(gh issue view "$n" --json title --jq .title)
+            type=$(printf '%s\n' "$title" | sed -nE 's/^(epic|feat|fix|chore|docs)(\([^)]*\))?!?:.*/\1/p')
+            if [ -n "$type" ]; then
+              gh issue edit "$n" --add-label "$type"
+            fi
+          done
