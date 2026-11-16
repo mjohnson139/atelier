@@ -2,6 +2,8 @@
 
 **A studio of AI perspectives that draw your software.**
 
+**[Read the concept →](https://mjohnson139.github.io/atelier/)**
+
 Give Atelier a brief, or a repository and a question. Four perspectives, a designer, an architect, an implementer and a tester, each draw the system from their own point of view. They use a local Python drawing kit, look at what they drew, and revise it. A curator lines their views up against one shared design model and reports where they disagree.
 
 Those disagreements are the point. An error screen with no path in the architecture, a dependency that would need a cycle in code, a state change that no test covers: each one is easy to miss in a single diagram and hard to miss when four views sit side by side.
@@ -56,7 +58,7 @@ All rendering is local and deterministic. No spec or image is sent to a hosted r
 
 Atelier is developed by AI agents under one owner, with a process carried over from [Words & Waffles](https://github.com/mjohnson139/words-and-waffles): GitHub issues are the queue, each session takes one issue to a reviewed pull request, a strong model plans and reviews while cheaper models do well-specified units, and lessons go into [`docs/solutions/`](docs/solutions/). The owner merges.
 
-- [`docs/concept.md`](docs/concept.md): the full concept
+- [Concept page](https://mjohnson139.github.io/atelier/) (source: [`docs/index.html`](docs/index.html)) and [`docs/concept.md`](docs/concept.md): the full concept
 - [`AGENTS.md`](AGENTS.md) and [`.github/dev-process.md`](.github/dev-process.md): how work gets done
 - [`docs/decisions.md`](docs/decisions.md): product decisions and the defaults in force
 - [`CONTRIBUTING.md`](CONTRIBUTING.md): how to help

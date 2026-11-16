@@ -1,5 +1,7 @@
 # Atelier concept
 
+The designed version of this document is the [concept page](https://mjohnson139.github.io/atelier/) (source: `docs/index.html`). This file is the plain-text copy agents work from; keep the two in step.
+
 ## The idea
 
 An experiment gave Claude artist personas and Python drawing tools, and the results were striking. It worked because three things came together: a persona with taste, real tools to make marks, and the ability to look at the result and try again. Atelier keeps all three and points them at software design.

@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# Rendered output: diff as text where it is text, never merge by line.
+*.svg   text eol=lf
+*.png   binary
+*.woff2 binary
+
+# Keep generated and vendored files out of language stats.
+docs/assets/fonts/** linguist-vendored
