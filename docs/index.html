@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atelier · a studio of AI perspectives that draw your software</title>
+<meta name="description" content="A studio of AI perspectives (designer, architect, implementer, tester) that draw your software with Python drawing tools, look at what they drew, and argue.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2318202e'/%3E%3Crect x='6' y='9' width='20' height='3' rx='1.5' fill='%23f07aa8'/%3E%3Crect x='6' y='14.5' width='20' height='3' rx='1.5' fill='%2386a6ff'/%3E%3Crect x='6' y='20' width='20' height='3' rx='1.5' fill='%235fd0a0'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://mjohnson139.github.io/atelier/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Atelier">
+<meta property="og:description" content="A studio of AI perspectives (designer, architect, implementer, tester) that draw your software with Python drawing tools, look at what they drew, and argue.">
+<meta property="og:url" content="https://mjohnson139.github.io/atelier/">
+<meta property="og:image" content="https://mjohnson139.github.io/atelier/assets/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Source of truth for the concept page. Fonts are self-hosted under assets/fonts (SIL OFL 1.1). -->
+<style>
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:200 800;font-display:swap;src:url(assets/fonts/bricolage-grotesque-latin.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:100 700;font-display:swap;src:url(assets/fonts/ibm-plex-sans-latin.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400-latin.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/ibm-plex-mono-500-latin.woff2) format("woff2")}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img,svg{max-width:100%}
+
+/* Layout: a drafting table. One narrow reading column on faint graph paper; each perspective keeps its own pencil colour all the way through. */
+:root{
+  --paper:#f6f8fb; --sheet:#ffffff; --ink:#18202e; --muted:#5a6475; --rule:#d9dfe8; --grid:rgba(47,91,211,.06);
+  --designer:#b8336a; --architect:#2f5bd3; --implementer:#1d7f55; --tester:#a86f00; --curator:#4a5263;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11151d; --sheet:#171c26; --ink:#e6eaf2; --muted:#9aa4b5; --rule:#2a3140; --grid:rgba(120,150,255,.06);
+  --designer:#f07aa8; --architect:#86a6ff; --implementer:#5fd0a0; --tester:#f0b950; --curator:#aab3c4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11151d; --sheet:#171c26; --ink:#e6eaf2; --muted:#9aa4b5; --rule:#2a3140; --grid:rgba(120,150,255,.06);
+  --designer:#f07aa8; --architect:#86a6ff; --implementer:#5fd0a0; --tester:#f0b950; --curator:#aab3c4; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.6rem;font-weight:800;margin-top:56px;padding-top:20px;border-top:1px solid var(--rule)}
+h3{font-size:1.1rem;font-weight:600}
+p,li{max-width:68ch}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);margin-top:14px}
+.pencils{display:flex;gap:6px;margin:22px 0 0}
+.pencils span{height:6px;flex:1;border-radius:3px}
+code,.mono{font-family:var(--mono);font-size:.88em}
+pre.code{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;overflow-x:auto;font:13px/1.55 var(--mono)}
+.thesis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.thesis div{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;min-width:0}
+.thesis b{display:block;font-family:var(--display);font-size:1.05rem;margin-bottom:4px}
+.persona{display:grid;grid-template-columns:8px 1fr;gap:0 18px;margin-top:22px}
+.persona .bar{border-radius:4px;background:var(--c)}
+.persona h3{color:var(--c)}
+.persona .meta{font:13px/1.5 var(--mono);color:var(--muted);margin:2px 0 8px}
+.persona dl{display:grid;grid-template-columns:110px 1fr;gap:4px 14px;margin:8px 0 0}
+.persona dt{font:500 .72rem/1.9 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.persona dd{margin:0;min-width:0}
+.tbl{overflow-x:auto;margin-top:16px;border:1px solid var(--rule);border-radius:8px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:500 .72rem/1.4 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-family:var(--mono);font-size:.85rem}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:1px}
+.diagram{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:12px;overflow-x:auto;margin-top:16px}
+.diagram svg{display:block;min-width:640px;width:100%;height:auto}
+.diagram text{font-family:var(--mono);font-size:12px;fill:var(--ink)}
+.diagram .lbl{fill:var(--muted);font-size:11px}
+.diagram .box{fill:var(--sheet);stroke:var(--rule);stroke-width:1.5}
+.diagram .ln{stroke:var(--muted);stroke-width:1.4;fill:none}
+.opt{display:grid;gap:12px;margin-top:16px}
+.opt div{border-left:3px solid var(--rule);padding:2px 0 2px 14px}
+.opt div.pick{border-color:var(--architect)}
+.tag{font:500 .7rem/1 var(--mono);padding:3px 7px;border-radius:99px;border:1px solid currentColor;margin-left:8px;vertical-align:2px;color:var(--architect)}
+ol.epics{padding-left:1.3em}
+ol.epics li{margin-bottom:8px}
+.toplink{margin:14px 0 0;font:13px/1.5 var(--mono);color:var(--muted)}
+.foot{margin-top:28px;font:13px/1.5 var(--mono);color:var(--muted)}
+.callout{background:var(--sheet);border:1px dashed var(--rule);border-radius:8px;padding:14px 16px;margin-top:18px}
+a{color:var(--architect)}
+:focus-visible{outline:2px solid var(--architect);outline-offset:2px}
+@media (max-width:520px){.persona dl{grid-template-columns:1fr}.persona dt{line-height:1.2;margin-top:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="eyebrow">Concept design · v0.2 · 16 Nov 2026</p>
+<h1>Atelier</h1>
+<p class="lede">A studio of AI perspectives that draw your software. Each one has a point of view, a kit of Python drawing tools, and eyes to look at what it drew. You bring a brief; they bring the sketches, the arguments between them, and the gaps they found.</p>
+<div class="pencils" aria-hidden="true"><span style="background:var(--designer)"></span><span style="background:var(--architect)"></span><span style="background:var(--implementer)"></span><span style="background:var(--tester)"></span><span style="background:var(--curator)"></span></div>
+<p class="toplink"><a href="https://github.com/mjohnson139/atelier">github.com/mjohnson139/atelier</a> · <a href="https://github.com/mjohnson139/atelier/issues?q=is%3Aissue+label%3Aepic">roadmap</a> · MIT</p>
+
+<h2>The idea in three parts</h2>
+<p>The artist-profile experiment worked because of three things together: a persona with taste, real tools to make marks, and the ability to look at the result and try again. Atelier keeps all three and points them at software design.</p>
+<div class="thesis">
+  <div><b>A perspective, not a prompt</b>Each profile says what it cares about, what it ignores, its vocabulary and its favourite forms. The architect draws boundaries and failure paths. The tester draws risk.</div>
+  <div><b>A drawing kit</b>Python tools that render declarative specs to SVG and PNG: graphs, sequences, wireframes, state machines, heatmaps. One free-hand canvas for anything the kit can't draw.</div>
+  <div><b>Eyes</b>Every render comes back as an image. The persona critiques its own drawing against a rubric and revises, up to three passes. This is where quality comes from.</div>
+</div>
+<p>One rule holds it together: <b>one design model, many views.</b> The perspectives all draw from a shared model of the system (actors, components, flows, states, risks). When two views disagree, that disagreement is the most useful thing the studio produces.</p>
+
+<h2>The studio</h2>
+<p>Four perspectives draw. A curator runs the session and compares their views. These map loosely onto the 4+1 architectural view model, with the tester playing the scenarios view.</p>
+
+<div class="persona" style="--c:var(--designer)"><div class="bar"></div><div>
+  <h3>Designer</h3><p class="meta">sees the system from the person using it</p>
+  <dl><dt>Cares about</dt><dd>User flows, every screen state (empty, loading, error, success), hierarchy, copy, what the user has to remember.</dd>
+  <dt>Draws</dt><dd>Flow maps, low-fi wireframes, a state grid per screen, journey maps with emotional dips.</dd>
+  <dt>Kit</dt><dd><code>draw_wireframe</code>, <code>draw_flow</code>, <code>draw_state_grid</code>, <code>draw_journey</code></dd>
+  <dt>Asks others</dt><dd>"Which of my error states has no path in your diagram?"</dd></dl>
+</div></div>
+
+<div class="persona" style="--c:var(--architect)"><div class="bar"></div><div>
+  <h3>Architect</h3><p class="meta">sees boundaries, data and failure</p>
+  <dl><dt>Cares about</dt><dd>Containers and their contracts, where data lives, trust boundaries, what happens when each dependency is slow or gone.</dd>
+  <dt>Draws</dt><dd>C4 context and container diagrams, sequence diagrams with failure branches, data-flow with trust zones, deployment maps.</dd>
+  <dt>Kit</dt><dd><code>draw_c4</code>, <code>draw_sequence</code>, <code>draw_dataflow</code>, <code>draw_deployment</code></dd>
+  <dt>Asks others</dt><dd>"Which of these boxes does your code actually depend on?"</dd></dl>
+</div></div>
+
+<div class="persona" style="--c:var(--implementer)"><div class="bar"></div><div>
+  <h3>Implementer</h3><p class="meta">sees modules, types and the order to build them</p>
+  <dl><dt>Cares about</dt><dd>Module boundaries, interface contracts, dependency direction, pure versus effectful code, the smallest buildable slice.</dd>
+  <dt>Draws</dt><dd>Module dependency graphs (from real code via AST when a repo is given), type and contract cards, call graphs, a build-order plan.</dd>
+  <dt>Kit</dt><dd><code>draw_modules</code>, <code>draw_contracts</code>, <code>draw_callgraph</code>, <code>scan_repo</code></dd>
+  <dt>Asks others</dt><dd>"Your diagram has an arrow my code would need a cycle to honour."</dd></dl>
+</div></div>
+
+<div class="persona" style="--c:var(--tester)"><div class="bar"></div><div>
+  <h3>Tester</h3><p class="meta">sees where it will break</p>
+  <dl><dt>Cares about</dt><dd>States and transitions, edge cases, likelihood times impact, which risks no test covers, the shape of the test suite.</dd>
+  <dt>Draws</dt><dd>State machines with a path-coverage overlay, risk heatmaps, boundary-value grids, a test pyramid against the real inventory.</dd>
+  <dt>Kit</dt><dd><code>draw_state_machine</code>, <code>draw_heatmap</code>, <code>draw_boundaries</code>, <code>draw_pyramid</code></dd>
+  <dt>Asks others</dt><dd>"This transition exists in two views and is tested in neither."</dd></dl>
+</div></div>
+
+<div class="persona" style="--c:var(--curator)"><div class="bar"></div><div>
+  <h3>Curator</h3><p class="meta">runs the session; the only one who edits the model</p>
+  <dl><dt>Does</dt><dd>Turns your brief into the starting model, briefs each perspective, merges their proposed model changes, cross-examines the views and hangs the final board.</dd>
+  <dt>Produces</dt><dd>The board (all views on one page), a findings list (contradictions, gaps, risks), and draft GitHub issues for the ones worth doing.</dd></dl>
+</div></div>
+
+<h2>How a session runs</h2>
+<div class="diagram" role="img" aria-label="Session flow: brief to model, four perspectives draw in parallel with a look-and-revise loop, curator cross-examines, board and findings out.">
+<svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+  <rect class="box" x="10" y="125" width="90" height="50" rx="6"/><text x="55" y="155" text-anchor="middle">brief</text>
+  <rect class="box" x="130" y="125" width="110" height="50" rx="6"/><text x="185" y="148" text-anchor="middle">design model</text><text class="lbl" x="185" y="164" text-anchor="middle">model/*.yaml</text>
+  <path class="ln" d="M100 150H128" marker-end="url(#ar)"/>
+  <path class="ln" d="M240 150H262" />
+  <path class="ln" d="M262 45V255" />
+  <g>
+    <rect x="280" y="22" width="190" height="44" rx="6" fill="var(--sheet)" stroke="var(--designer)" stroke-width="1.6"/><text x="296" y="49">designer</text>
+    <rect x="280" y="86" width="190" height="44" rx="6" fill="var(--sheet)" stroke="var(--architect)" stroke-width="1.6"/><text x="296" y="113">architect</text>
+    <rect x="280" y="150" width="190" height="44" rx="6" fill="var(--sheet)" stroke="var(--implementer)" stroke-width="1.6"/><text x="296" y="177">implementer</text>
+    <rect x="280" y="214" width="190" height="44" rx="6" fill="var(--sheet)" stroke="var(--tester)" stroke-width="1.6"/><text x="296" y="241">tester</text>
+    <path class="ln" d="M262 44H278M262 108H278M262 172H278M262 236H278" marker-end="url(#ar)"/>
+    <text class="lbl" x="400" y="49">draw ↺ look</text><text class="lbl" x="400" y="113">draw ↺ look</text><text class="lbl" x="400" y="177">draw ↺ look</text><text class="lbl" x="400" y="241">draw ↺ look</text>
+  </g>
+  <path class="ln" d="M470 44H492V256H470M470 108H492M470 172H492M470 236H492"/>
+  <path class="ln" d="M492 150H518" marker-end="url(#ar)"/>
+  <rect class="box" x="520" y="115" width="110" height="70" rx="6" style="stroke:var(--curator)"/><text x="575" y="142" text-anchor="middle">curator</text><text class="lbl" x="575" y="158" text-anchor="middle">cross-examine</text><text class="lbl" x="575" y="172" text-anchor="middle">merge model</text>
+  <path class="ln" d="M630 135H660V60H690" marker-end="url(#ar)"/>
+  <path class="ln" d="M630 165H660V240H690" marker-end="url(#ar)"/>
+  <rect class="box" x="692" y="38" width="60" height="44" rx="6"/><text x="722" y="65" text-anchor="middle">board</text>
+  <rect class="box" x="692" y="218" width="60" height="44" rx="6"/><text x="722" y="245" text-anchor="middle">findings</text>
+  <path class="ln" d="M575 185V282H185V177" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+  <text class="lbl" x="380" y="276" text-anchor="middle">accepted model changes → next round</text>
+</svg>
+</div>
+<ol>
+  <li><b>Frame.</b> The curator turns your brief (or a repo plus a question) into a first model and a rubric for this session.</li>
+  <li><b>Draw.</b> The four perspectives run in parallel. Each writes a spec, renders it, looks at the PNG, scores it against its rubric, and revises. Three passes at most.</li>
+  <li><b>Propose.</b> A perspective never edits the model. It returns its views plus a list of proposed model changes, each with a reason.</li>
+  <li><b>Cross-examine.</b> The curator lines the views up against the model and each other: states with no path, boxes with no code, transitions with no test, flows that cross a trust boundary unannounced.</li>
+  <li><b>Hang the board.</b> One HTML page with every view, the findings, and draft issues. Specs sit next to images, so every drawing can be re-rendered and diffed in a PR.</li>
+</ol>
+
+<h2>The drawing kit</h2>
+<p>A small Python package, <code>atelier_kit</code>, served to the perspectives as a local MCP server. Tools take a declarative JSON spec, render locally, and return the image so the model can see it. Declarative specs keep drawings reproducible and reviewable; the free-hand canvas keeps the room for invention that made the artist experiment interesting.</p>
+<div class="tbl"><table>
+<thead><tr><th>Tool</th><th>Spec in</th><th>Renders with</th><th>Used by</th></tr></thead>
+<tbody>
+<tr><td><code>draw_graph</code></td><td>nodes, edges, clusters, styles</td><td>Graphviz</td><td>all; the base for flow, C4, modules</td></tr>
+<tr><td><code>draw_sequence</code></td><td>participants, messages, alt/failure blocks</td><td>own layout on svgwrite</td><td>architect</td></tr>
+<tr><td><code>draw_wireframe</code></td><td>frames of boxes, text, buttons, inputs</td><td>svgwrite</td><td>designer</td></tr>
+<tr><td><code>draw_state_machine</code></td><td>states, transitions, coverage marks</td><td>Graphviz</td><td>tester, designer</td></tr>
+<tr><td><code>draw_heatmap</code></td><td>rows, columns, values, notes</td><td>matplotlib</td><td>tester</td></tr>
+<tr><td><code>scan_repo</code></td><td>path, language</td><td>AST / import graph</td><td>implementer, tester</td></tr>
+<tr><td><code>sketch</code></td><td>a matplotlib or svgwrite script</td><td>sandboxed subprocess</td><td>anyone; the free-hand canvas</td></tr>
+<tr><td><code>look</code></td><td>an image path</td><td>returns the image</td><td>all; the critique step</td></tr>
+<tr><td><code>compose_board</code></td><td>views, findings</td><td>static HTML</td><td>curator</td></tr>
+</tbody></table></div>
+<p>Every tool writes <code>views/&lt;perspective&gt;/&lt;name&gt;.{spec.json,svg,png}</code>. A golden-image test suite renders each spec in <code>kit/tests/specs/</code> and compares against committed output, so a kit change that moves pixels shows up in review.</p>
+
+<h3>A perspective profile</h3>
+<p>Profiles are Claude Code agent files, so the studio runs inside Claude Code itself. The body is the persona; the frontmatter pins the model and the tools.</p>
+<pre class="code">---
+name: studio-architect
+description: Draws the system's boundaries, data flow and failure paths
+  from the shared design model. Use in an Atelier session.
+model: sonnet
+tools: Read, Glob, mcp__atelier_kit__*
+---
+You are the studio's architect. You see containers, contracts, where
+data lives and what happens when a dependency is slow or gone.
+
+You ignore: colour schemes, copy, button placement, test counts.
+Your forms: C4 context and container, sequence with failure branches,
+data-flow with trust zones. Prefer one clear diagram to three busy ones.
+
+Loop: write a spec, render it, call look, score it on the rubric
+(legible at phone width? every arrow labelled? failure paths shown?
+matches the model?), revise. Stop after three passes or a 4/5 on every line.
+
+Never edit model/. Return: views drawn, proposed model changes with a
+reason each, and questions for the other perspectives.</pre>
+
+<h2>Where it runs</h2>
+<div class="opt">
+  <div class="pick"><h3>1. Inside Claude Code <span class="tag">v1, recommended</span></h3>Perspectives are <code>.claude/agents/studio-*.md</code> (the <code>studio-</code> prefix keeps them apart from the dev team's <code>implementer</code>, <code>mechanic</code> and <code>reviewer</code>), the kit is an MCP server in <code>.mcp.json</code>, and an <code>/atelier</code> skill runs the session as orchestrator. No infrastructure beyond a Claude subscription, and it works on any repo you open, locally or in a cloud session.</div>
+  <div><h3>2. A headless CLI on the Claude API <span class="tag" style="color:var(--muted)">v2</span></h3><code>atelier run brief.md</code>, built on the SDK's tool runner with the same kit and profiles. Lets a GitHub Action redraw the board when a PR changes architecture. Pay-per-token, so it waits until v1 has proven the profiles.</div>
+  <div><h3>3. Managed Agents <span class="tag" style="color:var(--muted)">later</span></h3>A scheduled "drift review" that redraws views from main every week and opens an issue when the code and the drawings disagree.</div>
+</div>
+
+<h2>Model choices</h2>
+<p>Borrowed from <a href="https://github.com/mjohnson139/words-and-waffles">Words &amp; Waffles</a>: the expensive model thinks, plans and reviews; cheaper models do work that can be fully specified. Drawing is design work, so the perspectives get more model than an implementer would, and the article's model is kept for the passes where taste shows.</p>
+<div class="tbl"><table>
+<thead><tr><th>Role</th><th>Model</th><th>Price in / out per 1M</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><span class="dot" style="--c:var(--curator)"></span>Curator (orchestrator)</td><td><code>claude-opus-5-5</code>, high effort</td><td class="num">$4 / $20</td><td>Owns the model, the cross-examination and every judgment call.</td></tr>
+<tr><td><span class="dot" style="--c:var(--architect)"></span>Perspectives, draft passes</td><td><code>claude-sonnet-5-5</code></td><td class="num">$2 / $10</td><td>Good visual judgment from images at half the curator's price; four run in parallel.</td></tr>
+<tr><td><span class="dot" style="--c:var(--designer)"></span>Perspectives, showcase pass</td><td><code>claude-fable-5-2</code></td><td class="num">$8 / $40</td><td>The model from the artist experiment. Opt-in with <code>--showcase</code> for a final pass where quality matters most.</td></tr>
+<tr><td><span class="dot" style="--c:var(--implementer)"></span>Kit builder</td><td><code>implementer</code> on Sonnet 5.5</td><td class="num">$2 / $10</td><td>Builds kit tools from a brief with golden tests, as in Words &amp; Waffles.</td></tr>
+<tr><td><span class="dot" style="--c:var(--tester)"></span>Mechanic</td><td><code>claude-haiku-5-5</code></td><td class="num">$0.10 / $0.50</td><td>Spec fixes, re-renders, captions, file moves.</td></tr>
+<tr><td><span class="dot" style="--c:var(--curator)"></span>Reviewer</td><td><code>reviewer</code> on Sonnet 5.5</td><td class="num">$2 / $10</td><td>Reviews kit diffs and checks views against the model.</td></tr>
+</tbody></table></div>
+<p>The model is one line of frontmatter per profile, so one perspective can be promoted to Fable for a session without touching the rest. Prices are the published API rates as of November 2026; inside Claude Code they come out of a subscription instead.</p>
+
+<h2>How it is built</h2>
+<p>Atelier is developed by AI agents under one owner, with the Words &amp; Waffles way of working adapted (<a href="https://github.com/mjohnson139/atelier/blob/main/.github/dev-process.md">dev process</a>):</p>
+<ul>
+  <li><b>Issues are the queue.</b> Epics with ordered sub-issues; titles and labels use <code>epic</code>, <code>feat</code>, <code>fix</code>, <code>chore</code>, <code>docs</code>. Each session starts from a prompt that names one issue.</li>
+  <li><b>Run contract.</b> A session implements, reviews, opens the PR and babysits CI. The owner merges and makes product calls.</li>
+  <li><b>Delegation.</b> <code>implementer</code>, <code>mechanic</code> and <code>reviewer</code> agents with pinned models, and the same brief template.</li>
+  <li><b>Handoff and compounding.</b> The <code>write-handoff</code> skill, <code>docs/solutions/</code> for investigations, <code>docs/decisions.md</code> for product decisions.</li>
+  <li><b>Hard lines, new ones included:</b> rendering is local (no Kroki, mermaid.ink or other render hosts); a perspective never edits the model; every image is committed next to the spec that made it; no secrets; <code>make verify</code> (ruff, mypy, pytest, golden images) before every push.</li>
+</ul>
+
+<h2>Roadmap</h2>
+<p>Each step is a GitHub <a href="https://github.com/mjohnson139/atelier/issues?q=is%3Aissue+label%3Aepic">epic</a> with ordered sub-issues. The first subject to draw is Words &amp; Waffles itself, because its owner already knows what the right drawings look like.</p>
+<ol class="epics">
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/1">Foundation</a>.</b> Repo, AGENTS.md, dev process, agents, <code>make verify</code>, CI.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/6">Kit v0</a>.</b> <code>draw_graph</code>, <code>draw_state_machine</code>, <code>draw_heatmap</code>, <code>look</code>, the MCP server, golden tests.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/12">One perspective, end to end</a>.</b> The architect draws W&amp;W from a hand-written model, with the look-and-revise loop. This is where we learn whether the idea works.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/15">The studio</a>.</b> All four profiles, <code>draw_wireframe</code> and <code>draw_sequence</code>, the <code>/atelier</code> skill, parallel runs, <code>compose_board</code>.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/20">Cross-examination</a>.</b> The curator's contradiction checks; findings become draft issues.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/23">Grounded in code</a>.</b> <code>scan_repo</code>: the implementer and tester read a real repo and its tests.</li>
+  <li><b><a href="https://github.com/mjohnson139/atelier/issues/26">Headless</a>.</b> The API CLI and a GitHub Action that redraws the board on PRs.</li>
+</ol>
+
+<h2>Decisions</h2>
+<p>Confirmed by the owner on 16 November 2026 and recorded in <a href="https://github.com/mjohnson139/atelier/blob/main/docs/decisions.md"><code>docs/decisions.md</code></a>.</p>
+<div class="tbl"><table>
+<thead><tr><th>Question</th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>Name</td><td>Atelier</td></tr>
+<tr><td>Kit language</td><td>Python 3.12, managed with uv; the drawing libraries live there</td></tr>
+<tr><td>Spec format</td><td>JSON validated by Pydantic; perspectives can't hand the kit malformed input</td></tr>
+<tr><td>Perspectives named or by role</td><td>By role. Personality goes in the profile, not a name</td></tr>
+<tr><td>Image format</td><td>SVG committed, PNG generated for <code>look</code> and the board</td></tr>
+<tr><td>Where it runs first</td><td>Inside Claude Code; the API CLI follows</td></tr>
+<tr><td>First subject</td><td>Words &amp; Waffles</td></tr>
+<tr><td>Licence and visibility</td><td>MIT, public from day one</td></tr>
+</tbody></table></div>
+
+<div class="callout"><b>Status: early.</b> The concept, the perspectives and the process are in place; the drawing kit is next. Follow along on <a href="https://github.com/mjohnson139/atelier">GitHub</a>: the <a href="https://github.com/mjohnson139/atelier/issues?q=is%3Aissue+label%3Aepic">epics</a> are the roadmap, and <a href="https://github.com/mjohnson139/atelier/blob/main/CONTRIBUTING.md">CONTRIBUTING</a> says how to help.</div>
+<p class="foot">Atelier · <a href="https://github.com/mjohnson139/atelier/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/mjohnson139/atelier">github.com/mjohnson139/atelier</a></p>
+</div>
+</body>
+</html>
