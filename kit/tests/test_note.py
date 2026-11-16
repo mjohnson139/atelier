@@ -61,3 +61,26 @@ def test_title_width_accounts_for_its_larger_size() -> None:
     title = "Untested transition"
     width, _ = _size(render(NoteSpec(title=title)))
     assert width >= 16 + 4 + len(title) * 16 * 0.6 + 16
+
+
+@pytest.mark.parametrize("bad", ["a\x00b", "bell\x07", "esc\x1b[0m", "￾"])
+def test_control_characters_are_rejected(bad: str) -> None:
+    with pytest.raises(ValidationError, match="control character"):
+        NoteSpec(title=bad)
+    with pytest.raises(ValidationError, match=r"spec\.lines\[1\]"):
+        NoteSpec(title="ok", lines=["fine", bad])
+
+
+def test_tabs_and_unicode_text_are_allowed() -> None:
+    assert "café" in render(NoteSpec(title="café", lines=["a\tb"]))
+
+
+def test_long_lines_are_rejected() -> None:
+    with pytest.raises(ValidationError):
+        NoteSpec(title="ok", lines=["x" * 81])
+
+
+def test_rendered_svg_is_well_formed_xml() -> None:
+    from xml.dom import minidom
+
+    minidom.parseString(render(NoteSpec(title="a & b", lines=["<tag>", '"q"'])))

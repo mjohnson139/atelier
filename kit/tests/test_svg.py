@@ -26,3 +26,15 @@ def test_normalise_keeps_real_differences() -> None:
     assert normalise_svg("<svg><text>a b</text></svg>") != normalise_svg(
         "<svg><text>a  b</text></svg>"
     )
+
+
+def test_normalise_compares_text_content_exactly() -> None:
+    assert normalise_svg("<svg><text>v1.234</text></svg>") != normalise_svg(
+        "<svg><text>v1.231</text></svg>"
+    )
+    assert normalise_svg("<svg><text> </text></svg>") != normalise_svg("<svg><text></text></svg>")
+
+
+def test_normalise_rounds_only_attribute_values() -> None:
+    assert normalise_svg('<svg><rect x="1.0049"/></svg>') == '<svg><rect x="1"/></svg>'
+    assert normalise_svg("<svg><text>1.0049</text></svg>") == "<svg><text>1.0049</text></svg>"

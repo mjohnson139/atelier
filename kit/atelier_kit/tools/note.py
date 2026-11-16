@@ -6,7 +6,7 @@ can be computed without font metrics, which keeps rendering deterministic.
 """
 
 import hashlib
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -32,10 +32,14 @@ _ACCENT_WIDTH = 4.0
 
 
 class NoteSpec(Spec):
-    """A card with a title and up to twelve short lines."""
+    """A card with a title and up to twelve lines of at most 80 characters.
+
+    Width is estimated from character count, which holds for Latin text in a
+    monospace face; wide scripts (CJK, emoji) will overflow the card.
+    """
 
     title: str = Field(min_length=1, max_length=60)
-    lines: list[str] = Field(default_factory=list, max_length=12)
+    lines: list[Annotated[str, Field(max_length=80)]] = Field(default_factory=list, max_length=12)
     tone: Tone = "neutral"
 
 
@@ -50,7 +54,8 @@ def render(spec: NoteSpec) -> str:
     accent = _ACCENT[spec.tone]
     text_x = _PAD + _ACCENT_WIDTH
     # Ids must be unique when several notes are inlined in one page (the board), and
-    # stable across runs (the goldens), so derive them from the spec itself.
+    # stable across runs (the goldens), so derive them from the spec itself. Two
+    # identical notes share an id, which is harmless while their clip paths match.
     clip_id = "note-" + hashlib.sha1(spec.model_dump_json().encode()).hexdigest()[:10]
 
     parts = [

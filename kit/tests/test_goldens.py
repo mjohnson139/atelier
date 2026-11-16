@@ -41,3 +41,10 @@ def test_rendering_is_deterministic() -> None:
     for spec_file in SPEC_FILES:
         document = json.loads(spec_file.read_text(encoding="utf-8"))
         assert render_document(document) == render_document(document), spec_file.stem
+
+
+def test_every_golden_has_a_spec() -> None:
+    orphans = sorted(
+        svg.name for svg in SPECS.glob("*.svg") if not svg.with_suffix(".json").exists()
+    )
+    assert not orphans, f"golden SVGs with no spec (delete or rename them): {orphans}"

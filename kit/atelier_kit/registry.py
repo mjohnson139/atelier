@@ -9,19 +9,22 @@ from atelier_kit.tools import note
 
 
 @dataclass(frozen=True)
-class Tool:
-    """A kit tool: its spec type and the pure function that renders it."""
+class Tool[S: Spec]:
+    """A kit tool: its spec type and the pure function that renders it.
+
+    Generic in the spec type, so mypy rejects a renderer paired with the wrong spec.
+    """
 
     name: str
-    spec_type: type[Spec]
-    render: Callable[[Any], str]
+    spec_type: type[S]
+    render: Callable[[S], str]
 
     def render_data(self, data: Mapping[str, Any]) -> str:
         """Validate raw spec data and render it to SVG."""
         return self.render(self.spec_type.model_validate(data))
 
 
-TOOLS: dict[str, Tool] = {
+TOOLS: dict[str, Tool[Any]] = {
     tool.name: tool for tool in (Tool("draw_note", note.NoteSpec, note.render),)
 }
 
