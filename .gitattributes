@@ -7,3 +7,5 @@
 
 # Keep generated and vendored files out of language stats.
 docs/assets/fonts/** linguist-vendored
+*.ttf   binary
+kit/atelier_kit/fonts/** linguist-vendored
