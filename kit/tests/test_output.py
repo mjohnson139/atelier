@@ -84,6 +84,21 @@ def test_text_is_drawn_with_vendored_font(document: dict[str, Any]) -> None:
     assert svg_to_png(svg) != svg_to_png(without_text)
 
 
+@pytest.mark.parametrize("family", ["DejaVu Sans", "Arial", "Helvetica", "sans-serif", "serif"])
+def test_png_ignores_fonts_on_the_machine(document: dict[str, Any], family: str) -> None:
+    """Naming a face the machine may have must still draw with the vendored one.
+
+    On a machine with that face installed, this fails if system fonts are ever loaded.
+    """
+    svg = render_document(document)
+    other = svg.replace('font-family="IBM Plex Mono, monospace"', f'font-family="{family}"')
+    assert other != svg
+    # Weight 500 is dropped from the comparison: a fallback from an unknown family
+    # picks Regular, which is the documented behaviour.
+    plain = svg.replace(' font-weight="500"', "")
+    assert svg_to_png(other.replace(' font-weight="500"', "")) == svg_to_png(plain)
+
+
 def test_second_write_overwrites(tmp_path: Path, document: dict[str, Any]) -> None:
     first = write_view(document, "designer", "board", tmp_path)
     before = first.png.read_bytes()
@@ -175,6 +190,12 @@ def test_target_file_symlink_rejected(tmp_path: Path, document: dict[str, Any]) 
 def test_no_network_used(
     tmp_path: Path, document: dict[str, Any], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Guards the Python side only: resvg is native code these patches cannot see.
+
+    resvg has no network code (it does not fetch remote references), so what this
+    catches is a kit tool or helper that starts opening sockets.
+    """
+
     def forbidden(*args: object, **kwargs: object) -> None:
         raise AssertionError("network used while rendering")
 
@@ -210,6 +231,46 @@ def test_look_respects_root(tmp_path: Path, document: dict[str, Any]) -> None:
     assert look(inside.png, root).media_type == PNG_MEDIA_TYPE
     with pytest.raises(ValueError, match="outside"):
         look(outside.png, root)
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="symlinks need privileges on Windows")
+def test_look_rejects_symlink_out_of_root(tmp_path: Path, document: dict[str, Any]) -> None:
+    (inside, outside) = (tmp_path / "in", tmp_path / "out")
+    inside.mkdir()
+    outside.mkdir()
+    real = write_view(document, "designer", "board", outside).png
+    link = inside / "board.png"
+    link.symlink_to(real)
+    with pytest.raises(ValueError, match="outside"):
+        look(link, inside)
+
+
+@pytest.mark.parametrize("reserved", ["con", "nul", "aux", "prn", "com1", "lpt9"])
+def test_windows_device_names_rejected(
+    tmp_path: Path, document: dict[str, Any], reserved: str
+) -> None:
+    with pytest.raises(ValueError, match="reserves"):
+        write_view(document, "designer", reserved, tmp_path)
+    with pytest.raises(ValueError, match="reserves"):
+        write_view(document, reserved, "board", tmp_path)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_failed_write_leaves_the_old_view(
+    tmp_path: Path, document: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    paths = write_view(document, "designer", "board", tmp_path)
+    before = {path: path.read_bytes() for path in (paths.spec, paths.svg, paths.png)}
+
+    def full_disk(source: Path, target: Path) -> None:
+        raise OSError("no space left on device")
+
+    monkeypatch.setattr("atelier_kit.output.os.replace", full_disk)
+    revised = {"tool": "draw_note", "spec": {"title": "Revised"}}
+    with pytest.raises(OSError, match="no space"):
+        write_view(revised, "designer", "board", tmp_path)
+    assert {path: path.read_bytes() for path in before} == before
+    assert sorted(paths.png.parent.iterdir()) == sorted(before)
 
 
 def test_vendored_fonts_exist() -> None:

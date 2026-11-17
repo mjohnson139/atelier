@@ -9,6 +9,7 @@ machine. Nothing here touches the network.
 """
 
 import json
+import os
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -27,6 +28,10 @@ _FONT_FAMILY = "IBM Plex Mono"
 _FONTS_DIR = Path(__file__).parent / "fonts"
 _NAME_RULE = "^[a-z0-9][a-z0-9-]{0,63}$"
 _NAME_RE = re.compile(_NAME_RULE)
+# Device names Windows will not treat as files, whatever the extension.
+_RESERVED = {"con", "prn", "aux", "nul"} | {
+    f"{dev}{n}" for dev in ("com", "lpt") for n in range(10)
+}
 
 
 @dataclass(frozen=True)
@@ -72,10 +77,22 @@ def _check_name(argument: str, value: str) -> None:
             f"invalid {argument} {value!r}: use 1 to 64 lowercase letters, digits or "
             f"hyphens, starting with a letter or digit (pattern {_NAME_RULE})"
         )
+    if value in _RESERVED:
+        raise ValueError(f"invalid {argument} {value!r}: Windows reserves that name; pick another")
 
 
 def _is_inside(path: Path, root: Path) -> bool:
     return path == root or root in path.parents
+
+
+def _replace(path: Path, data: bytes) -> None:
+    """Write beside ``path`` and rename over it, so a reader never sees half a file."""
+    scratch = path.with_name(f".{path.name}.tmp")
+    try:
+        scratch.write_bytes(data)
+        os.replace(scratch, path)
+    finally:
+        scratch.unlink(missing_ok=True)
 
 
 def write_view(document: Mapping[str, Any], perspective: str, name: str, root: Path) -> ViewPaths:
@@ -115,9 +132,10 @@ def write_view(document: Mapping[str, Any], perspective: str, name: str, root: P
         )
         + "\n"
     )
-    paths.spec.write_text(spec_text, encoding="utf-8", newline="\n")
-    paths.svg.write_text(svg, encoding="utf-8", newline="\n")
-    paths.png.write_bytes(png)
+    # The PNG goes last: it is what `look` reads, so it never runs ahead of its spec.
+    _replace(paths.spec, spec_text.encode("utf-8"))
+    _replace(paths.svg, svg.encode("utf-8"))
+    _replace(paths.png, png)
     return paths
 
 
@@ -133,7 +151,10 @@ def look(path: Path, root: Path | None = None) -> Image:
         raise ValueError(f"{str(path)!r} does not exist")
     if not path.is_file():
         raise ValueError(f"{str(path)!r} is not a file")
-    data = path.read_bytes()
-    if not data.startswith(_PNG_SIGNATURE):
-        raise ValueError(f"{str(path)!r} is not a PNG file")
+    with path.open("rb") as file:
+        # Check the signature before reading on, so a large non-PNG is never loaded.
+        head = file.read(len(_PNG_SIGNATURE))
+        if head != _PNG_SIGNATURE:
+            raise ValueError(f"{str(path)!r} is not a PNG file")
+        data = head + file.read()
     return Image(data=data, media_type=PNG_MEDIA_TYPE)

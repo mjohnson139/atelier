@@ -21,7 +21,7 @@ tags: [resvg, fonts, png, determinism]
 
 - Vendor the complete Regular and Medium faces from the upstream `@ibm/plex-mono` npm package into `kit/atelier_kit/fonts/`, unwrapped from WOFF2 to TrueType by `scripts/vendor-kit-fonts.py` (pinned version and hash; reproducible bytes).
 - Call resvg with `skip_system_fonts=True`, those files as `font_files`, and every generic family set to `IBM Plex Mono`.
-- A test compares the PNG with and without its `<text>` elements, so fonts that fail to load fail the suite instead of shipping blank drawings.
+- Two tests hold this in place: one compares the PNG with and without its `<text>` elements, so fonts that fail to load fail the suite instead of shipping blank drawings; the other names faces a machine is likely to have (DejaVu Sans, Arial) and expects the same bytes as Plex, which fails on any machine with those faces if system fonts are ever loaded.
 
 ## Still true
 
