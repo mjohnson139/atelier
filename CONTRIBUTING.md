@@ -16,6 +16,8 @@ make goldens    # re-render golden SVGs after an intended visual change, then re
 
 Golden specs live in `kit/tests/specs/` as `<name>.json` (`{"tool": ..., "spec": {...}}`) next to the `<name>.svg` they must render to.
 
+PNGs are rasterised from the SVG by [resvg](https://github.com/linebender/resvg), which arrives as a wheel, so there is no system library to install. Text is drawn with the IBM Plex Mono files in `kit/atelier_kit/fonts/` and never with fonts from your machine; `scripts/vendor-kit-fonts.py` is how they got there.
+
 ## Hard lines
 
 Pull requests that cross these are closed:
